@@ -4,7 +4,7 @@
  * 	page swaping, and phonegap code.
  */
 
-document.addEventListener("deviceready",function(){
+document.addEventListener("deviceready", function(){
 $(document).ready(function(){
 
 /********************************************* 
@@ -21,7 +21,6 @@ $(document).ready(function(){
 	$("#btnSinglePlayer").click(function(){
 		$('#start-menu-wrapper').css('display','none');
 		$('#content').css('display','block');
-		startWatch();
 	});
 
 /**********************************************
@@ -29,8 +28,6 @@ $(document).ready(function(){
  **********************************************/
 
 	// #content code
-	var count = 1;
-			
 	var board = new Array(3);
 			
 	for(i=0;i<3;i++){
@@ -41,32 +38,32 @@ $(document).ready(function(){
 
 	// cells of the board		
 	$(".cell").click(function(){
-		if( count % 2 != 0){
-			if(isValidMove(this.id)){
-				$("#"+this.id).html("X");
-				$("#whos-turn #whos-turn-img").css("background-image","url('img/cpu.png')");
-				$("#whos-turn").css("left","45%");
-				isWin();
-				count++;
+
+		startWatch();
+		
+		if(isValidMove(this.id)){
+			$("#"+this.id).html("X");
+			$("#whos-turn #whos-turn-img").css("background-image","url('img/cpu.png')");
+			$("#whos-turn").css("left","45%");
+			isWin();
 						
-				// cpu move is right after our move
-				// setTimeout() adds a delay
-				if(!isFull()){
-					setTimeout(function(){
+			// cpu move is right after our move
+			// setTimeout() adds a delay
+			if(!isFull()){
+				setTimeout(function(){
 					var id = cpuMove();
 					$("#"+id).html("O");
 					$("#whos-turn #whos-turn-img").css("background-image","url('img/you.png')");
 					$("#whos-turn").css("left","45%");
 					isWin();
-					count++;
-					},1000);
+					
+				},1000);
 
-					} else { timeout(); }	
+			} else { timeout(); }	
 	
-				} else {
-					alert("Invalid move");
-				}
-			}
+		} else {
+				alert("Invalid move");
+		}
 	});
 
 	// reset board
@@ -290,27 +287,64 @@ $(document).ready(function(){
 		timeout();
 	 }
 	}
+
 	function timeout(){
 		setTimeout(function(){
 			$(".cell").html("");
-			$("#whos-turn #whos-turn-img").css("background-image","url('img/welcome.png')");
+			$("#whos-turn #whos-turn-img").css("background-image","url('')");
 			resetBoard(); 
 		 },800);
 	}
+
 /****************************************** 
 		 Phonegap
  ******************************************/
 
-	//detects shake event
-	function startWatch(){
+	// init
+	document.addEventListener("pause", onPause, false);
+	
+	// pause
+	function onPause(){
+	}
 
-		var preReading = {
+	//geolocation
+	var geo_opts = { frequency : 3000 };
+	var geoLocationId = navigator.geolocation.getCurrentPosition(onSuccessLocation, geoError, geo_opts);
+
+	function onSuccessLocation(position){
+		$("#txtLat").html(""+position.coords.latitude);
+		$("#txtLong").html(""+position.coords.longitude);
+	}
+
+	function geoError(){
+	}	
+
+	//detects shake event
+
+	var watchId = null;
+	
+	var preReading = {
 			x : 0,
 			y : 0,
 			z : 0
-		};
+	};
 
-		navigator.accelerometer.watchAcceleration(function(curReading) {
+	function startWatch(){
+
+	var opts = { frequency : 2000 };
+
+	navigator.accelerometer.watchAcceleration(onSuccess, onError, opts);
+	
+	}
+
+	function stopWatch(){
+		if(watchId){
+			navigator.accelerometer.clearWatch(watchId);
+			watchId = null;
+		}
+	}
+
+	function onSuccess(curReading) {
 
 			var delta = {
 				x : 0,
@@ -318,7 +352,7 @@ $(document).ready(function(){
 				z : 0
 			};
 
-			var limit = 0.2;
+			var limit = 1.0;
 
 			if(preReading.x !== 0){
 				delta.x = Math.abs(preReading.x - curReading.x);
@@ -326,10 +360,10 @@ $(document).ready(function(){
 				delta.z = Math.abs(preReading.z - curReading.z);
 			}
 
-			if(delta.x > limit || delta.y > limit || delta.z > limit){
-				$(".cell").html("");
-				$("#whos-turn #whos-turn-img").css("background-image","url('img/welcome.png')");
-				resetBoard();
+			if(delta.x > limit && delta.y > limit && delta.z > limit){
+				stopWatch();
+				timeout();
+				return;
 			}
 					
 			preReading = {
@@ -337,8 +371,10 @@ $(document).ready(function(){
 				y : curReading.y,
 				z : curReading.z
 			};
+	}
 
-		}, { frequency : 2000 });
+	function onError(){
+		// error code
 	}
 });
 },false);

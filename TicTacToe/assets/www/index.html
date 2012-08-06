@@ -7,10 +7,6 @@
 
 	<link rel="stylesheet" href="css/style.css" type="text/css" />
 
-	<script src="js/jquery-1.7.2.min.js"></script>
-	<script type="text/javascript" charset="utf-8" src="cordova-2.0.0.js"></script>
-	<script src="js/game.js"></script>
-	<script src="js/multi-game.js"></script>
 </head>
 <body onload="onDeviceReady()">
 	<div id="wrapper">
@@ -26,6 +22,9 @@
 		</div>
 
 		<div id="content">
+			<div class="backButtonDiv">
+				<Button type="button" id="backButton">Back</Button>
+			</div>
 			<div id="div-board">
 				<div id="whos-turn">
 					<div id="whos-turn-img"> </div>
@@ -48,16 +47,27 @@
 							<td class="cell" id="22"> </td>
 						</tr>
 					</table>
+				</div><br/><br/><br/>
+
+				<div id="location-wrapper">
+					<ul id="location-list">
+						<li>Just so you know...</li><br/>
+						<li id="li-lat">Latitude:<div id="txtLat"> </div></li>
+						<li id="li-long">Longitude:<div id="txtLong"> </div></li>
+					</ul>
 				</div>
 			</div>
 		</div>
 
 		<div id="multi-content">
+			<div class="backButtonDiv">
+				<Button type="button" id="backButton2">Back</Button>
+			</div>
 			<div id="player"></div>
 			<div id="input-wrapper">
 				<input id="newGame" type="button" value="New Game"/><div id="outerGameID">Enter Game Number</div>
 				<input id="gameID" type="text"/><input id="connectToAGame" type="button" value="Connect to a Game"/>
-			</div>
+			</div><br/><br/>
 			<div>
 				<table id="board">
 					<tr>
@@ -70,7 +80,12 @@
 						<td id="6">_</td><td id="7">_</td><td id="8">_</td>
 					</tr>
 			</div>
-		</div>
+		</div>  
 	</div>
+
+	<script src ="js/jquery-1.7.2.min.js"></script>
+	<script type="text/javascript" charset="utf-8" src="cordova-2.0.0.js"></script>
+	<script src="js/game.js"></script>
+	<script src="js/multi-game.js"></script>
 </body>
 </html>

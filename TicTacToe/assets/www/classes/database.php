@@ -5,13 +5,13 @@ class database {
 	public $collection;
 	protected $cursor;
 	protected $db;
-	
+
 function __construct()
 {
 $this->set_database('tttDB');
 $this->set_collection('tttCollection');
 }
-	
+
 	//makes a connection for mongo
 	private function set_connection() {
 		$this->connection = new mongo();
@@ -21,8 +21,8 @@ $this->set_collection('tttCollection');
 		$this->set_connection();
 		$this->db = $this->connection->$db;	
 	}
-	
-	
+
+
 	//inserts a document
 	public function insert_document($document) {
 		$this->collection->insert($document);
@@ -33,10 +33,10 @@ $this->set_collection('tttCollection');
 	}
 	//delete document by id()
 	public function remove_document_by_id($id, $options = array("justOne" => true)) {
-	
+
 		$query = $this->get_mongoID($id);
-		
-		
+
+
 		$this->cursor = $this->collection->remove($query, $options);
 	}
 	//finds one document by id
@@ -44,7 +44,7 @@ $this->set_collection('tttCollection');
 		$query = $this->get_mongoID($id);
 		$this->cursor = $this->collection->findone($query);
 	}
-	
+
 	//finds more than one document
 	public function find_documents($query = null) {
 		if($query == null) {
@@ -55,7 +55,7 @@ $this->set_collection('tttCollection');
 		}
 		return $this->cursor;
 	}
-	
+
 		//finds one document
 	public function find_document($query = null) {
 		if($query == null) {
@@ -66,9 +66,9 @@ $this->set_collection('tttCollection');
 		}
 		return $this->cursor;
 	}
-	
-	
-	
+
+
+
 	//sets the collection
 	public function set_collection($collection) {
 		$this->collection = $this->db->$collection;
@@ -77,34 +77,34 @@ $this->set_collection('tttCollection');
 	public function set_index($index) {
 		$this->collection->ensureIndex($index);
 	}
-	
+
 	public function get_cursor() {
 		return $this->cursor;
 	}
-	
+
 	public function drop_collection() {
 		$this->collection->drop();
 	}
-	
+
 	public function get_collections() {
 		return $this->db->listCollections();
 	}
 	private function get_mongoID($id) {
 		return array('_id' => new MongoId($id));
 	}
-	 
+
 	public function return_array_from_collection()
 	{
 		$this->cursor = $this->collection->find();
 		$results = iterator_to_array($this->cursor);
 	return var_dump($results);
 	}
-	
+
 	public function get_find_cursor() 
 	{
 	$this->cursor = $this->collection->find();
 	}
-	
+
 	public function get_collection() 
 	{ 
 		return $this->collection();   
@@ -112,5 +112,4 @@ $this->set_collection('tttCollection');
 
 }
 ?>
-
 

@@ -1,3 +1,9 @@
+/*
+ * 	@author Desmond Johnson
+ * 	This script contains all of the javascript/jquery multiplayer code
+ *  and the back button functionality for the app
+ */
+
 var player = 0;
 var gid1 = null;
 var gid2 = null;
@@ -98,7 +104,17 @@ if(newGame == null){
 player = "x";
 newGameFunction();
 stayAlive();
-}}); 
+}
+else
+{
+resetVariables();
+if(newGame == null){
+player = "x";
+newGameFunction();
+stayAlive();
+}	
+}
+}); 
 
 $('#connectToAGame').click(function(){
 var notNullCheck = document.getElementById('gameID').value;
@@ -109,7 +125,8 @@ connectToAGame();
 stayAlive();
 }}); 
 
-
+//request that changes be made to the database table based on the move the player has made
+//and updates the local variables based on its response
 function sendMove(e){
 var ajaxRequest = $.ajax({
 url:"http://mywebclass.org/~dj65/tictactoe/json.php?0=" +newGame+ "&1=" +gid1T+ "&2=" +player+ "&3=" +index+ "&4=" + gid2T, 
@@ -136,6 +153,7 @@ gameCheck();
 }); 
 }
 
+//tells the database to create a new game (table), and sets the local variables based on the response
 function newGameFunction(){
 var ajaxRequest = $.ajax({
 url:"http://mywebclass.org/~dj65/tictactoe/json.php?0=1&1=0&2=0&3=0&4=0", 
@@ -163,6 +181,7 @@ updateAll();
 }); 
 }
 
+//makes an ajax connection to the server, and updates the local variables based on the results
 function connectToAGame(){
 var ajaxRequest = $.ajax({
 url:"http://mywebclass.org/~dj65/tictactoe/json.php?0=0&1=0&2=0&3=0&4=" + gid1, 
@@ -184,7 +203,7 @@ gid2  = result2[9];
 gid1T  = result2[9];
 gid2T  = result2[9];
 turn = result2[10];
-document.getElementById('player').innerHTML = "&nbsp;&nbsp;&nbsp; &nbsp; &nbsp; &nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; &nbsp; &nbsp&nbsp;&nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;You're<span class=\"playerfont\"> "+player+"</span>&nbsp;&nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; X goes first";
+document.getElementById('player').innerHTML = "You're<span class=\"playerfont\"> "+player+"</span>&nbsp;&nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; X goes first";
 document.getElementById('outerGameID').innerHTML = result2[9];
 updateAll();
 }
@@ -192,12 +211,13 @@ updateAll();
 }); 
 }
 
+//reads the game data from the server and updates the board elements based on the result once every second
 function stayAlive(){
 timer = setInterval(function(){connectToAGame();gameCheck();},1000);
 }
 
 
-
+//updates all of the board elements
 function updateAll(){
 if(zero == "x"){document.getElementById('0').innerHTML = "X";}
 if(one == "x"){document.getElementById('1').innerHTML = "X";}
@@ -221,6 +241,7 @@ $('#outerGameID').innerHTML = gid1;
 
 }
 
+//determines if a player has won
 function gameCheck(){
 if(zero == "x" && one == "x" && two=="x"){alert("X Wins!!!!!!!!!!");clearInterval(timer);}
 if(three == "x" && four == "x" && five=="x"){alert("X Wins!!!!!!!!!!");clearInterval(timer);}
@@ -240,3 +261,53 @@ if(two == "o" && five == "o" && eight=="o"){alert("O Wins!!!!!!!!!!");clearInter
 if(zero == "o" && four == "o" && eight=="o"){alert("O Wins!!!!!!!!!!");clearInterval(timer);}
 if(six == "o" && four == "o" && two=="o"){alert("O Wins!!!!!!!!!!");clearInterval(timer);}
 }
+
+//resets all of the variables
+function resetVariables(){
+player = 0;
+gid1 = null;
+gid2 = null;
+gid1T = null;
+gid2T = null;
+index = 0;
+newGame = null;
+turn = null;
+result = null;
+result2 = null;
+timer = null;
+
+zero = null;
+one = null;
+two = null;
+three = null;
+four = null;
+five = null;
+six = null;
+seven = null;
+eight = null;
+$('#outerGameID').empty();
+$('#player').empty();
+$('#0').empty();
+$('#1').empty();
+$('#2').empty();
+$('#3').empty();
+$('#4').empty();
+$('#5').empty();
+$('#6').empty();
+$('#7').empty();
+$('#8').empty();
+}
+
+// #Back Button code
+$(document).ready(function(){
+	$("#backButton").click(function(){
+		$('#content').css('display','none');
+		$('#start-menu-wrapper').css('display','block');
+		resetVariables();
+	});
+
+	$("#backButton2").click(function(){
+		$('#multi-content').css('display','none');
+		$('#start-menu-wrapper').css('display','block');
+	});
+});

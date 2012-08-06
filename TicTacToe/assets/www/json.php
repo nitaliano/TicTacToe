@@ -1,4 +1,8 @@
 <?php
+/*
+ * 	@author Desmond Johnson
+ * 	This script reads the input from the multi-game.js, accesses the database, and returns the results
+ */
 require('classes/game.php');
 $new = new game();
 
